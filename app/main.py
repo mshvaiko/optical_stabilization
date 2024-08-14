@@ -4,12 +4,17 @@ import time
 import cv2
 import numpy as np
 import bright_spot_tracker as bst
+import orb_tracker as ot
 
 # Define the video file path
-VIDEO_PATH = r'.\assets\moving_red_spot.mp4' # 1
+# VIDEO_PATH = r'./assets/moving_red_spot.mp4' # for bright_spot_tracker
+VIDEO_PATH = r'./assets/flying_drone.mov' # orb_tracker
 
 # FOR DEBUG: Use playback delay to match the video frame rate
 DEBUG_FRAME_DELAY = True
+
+# Define the working algorytm
+WORKING_ALGORYTM = 'ot' # 'bst', 'ot'
 
 def main():
     # Open the video file using cv2.VideoCapture
@@ -32,9 +37,12 @@ def main():
             break
 
         # Process the frame to find and track the drone
-        coordinates = bst.process_frame(frame)
-        if coordinates:
-            print(f"Drone coordinates: {coordinates}")
+        match WORKING_ALGORYTM:
+            case 'bst':
+                coordinates = bst.process_frame(frame)
+            case 'ot':
+                coordinates = ot.process_frame(frame)
+        print(f"Drone coordinates: {coordinates}")
 
         # Print the cross and misc text
         cv2.line(frame, (frame.shape[1] // 2, 0), (frame.shape[1] // 2, frame.shape[0]), (0, 255, 0), 1)
