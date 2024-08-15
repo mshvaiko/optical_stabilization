@@ -4,9 +4,9 @@ import cv2
 import numpy as np
 
 # Define the range for red color in HSV
-lOWER_RED1 = np.array([0, 100, 100])
+LOWER_RED1 = np.array([0, 100, 100])
 UPPER_RED1 = np.array([10, 255, 255])
-LOWER_RED2 = np.array([160, 100, 100])
+LOWER_RED2 = np.array([150, 100, 100])
 UPPER_RED2 = np.array([180, 255, 255])
 
 def process_frame(frame):
@@ -14,7 +14,7 @@ def process_frame(frame):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     
     # Create masks for red color
-    mask1 = cv2.inRange(hsv, lOWER_RED1, UPPER_RED1)
+    mask1 = cv2.inRange(hsv, LOWER_RED1, UPPER_RED1)
     mask2 = cv2.inRange(hsv, LOWER_RED2, UPPER_RED2)
     mask = cv2.bitwise_or(mask1, mask2)
 
@@ -50,7 +50,7 @@ def process_frame(frame):
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
 
     # Print level colors
-    lower_red1_bgr = cv2.cvtColor(np.uint8([[lOWER_RED1]]), cv2.COLOR_HSV2BGR)[0][0]
+    lower_red1_bgr = cv2.cvtColor(np.uint8([[LOWER_RED1]]), cv2.COLOR_HSV2BGR)[0][0]
     cv2.rectangle(frame, (0,0), (50,50), lower_red1_bgr.tolist(), -1)
     upper_red1_bgr = cv2.cvtColor(np.uint8([[UPPER_RED1]]), cv2.COLOR_HSV2BGR)[0][0]
     cv2.rectangle(frame, (50,0), (100,50), upper_red1_bgr.tolist(), -1)
