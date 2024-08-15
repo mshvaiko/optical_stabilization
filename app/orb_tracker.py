@@ -48,19 +48,20 @@ def process_frame(frame):
     # Initialize list to store coordinates
     coord_array = []
 
-    matches = bf.match(descriptors_1, descriptors_2)
-    for match in matches:
-        # .trainIdx gives keypoint index from current frame 
-        train_idx = match.trainIdx
-        
-        # current frame keypoints coordinates
-        pt2 = keypoints_2[train_idx].pt
+    if descriptors_2 is not None:
+        matches = bf.match(descriptors_1, descriptors_2)
+        for match in matches:
+            # .trainIdx gives keypoint index from current frame 
+            train_idx = match.trainIdx
+            
+            # current frame keypoints coordinates
+            pt2 = keypoints_2[train_idx].pt
 
-        # Append coordinates to the list
-        coord_array.append(pt2)
-        
-        # draw circle to pt2 coordinates , because pt2 gives current frame coordinates
-        cv2.circle(frame,(int(pt2[0]),int(pt2[1])),2,(255,0,0),2)
+            # Append coordinates to the list
+            coord_array.append(pt2)
+            
+            # draw circle to pt2 coordinates , because pt2 gives current frame coordinates
+            cv2.circle(frame,(int(pt2[0]),int(pt2[1])),2,(255,0,0),2)
 
     # Get the center of the major cluster
     cX, cY = None, None
