@@ -3,7 +3,9 @@
 import cv2
 import numpy as np
 
-TARGET_IMAGE = r'.\assets\flying_drone_example.png'
+# TARGET_IMAGE = r'.\assets\flying_drone.png'
+# TARGET_IMAGE = r'.\assets\hexacopter.png'
+TARGET_IMAGE = r'.\assets\red_drone.png'
 
 # Initiate ORB
 orb = None
@@ -31,7 +33,7 @@ def init_orb():
     # Display the image with the keypoints
     cv2.imshow('Image', img2)
 
-def process_frame(frame):
+def process_frame(frame, osd_frame):
     # Init ORB if needed
     if orb is None:
         init_orb()
@@ -40,7 +42,7 @@ def process_frame(frame):
     coordinates = None
 
     # convert frame to gray scale 
-    frame_gray=cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+    frame_gray=cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     
     # compute the descriptors with BRIEF
     keypoints_2, descriptors_2 = orb.detectAndCompute(frame_gray, None)
@@ -61,7 +63,7 @@ def process_frame(frame):
             coord_array.append(pt2)
             
             # draw circle to pt2 coordinates , because pt2 gives current frame coordinates
-            cv2.circle(frame,(int(pt2[0]),int(pt2[1])),2,(255,0,0),2)
+            cv2.circle(osd_frame,(int(pt2[0]),int(pt2[1])),2,(255,0,0),2)
 
     # Get the center of the major cluster
     cX, cY = None, None
@@ -81,8 +83,8 @@ def process_frame(frame):
     coordinates = (cX_centered, cY_centered)
 
     # Print the coordinates on the frame
-    cv2.circle(frame, (int(cX), int(cY)), 1, (0, 0, 255), -1)
-    cv2.putText(frame, f"({cX_centered}, {cY_centered})", (cX + 10, cY + 10),
+    cv2.circle(osd_frame, (int(cX), int(cY)), 1, (0, 0, 255), -1)
+    cv2.putText(osd_frame, f"({cX_centered}, {cY_centered})", (cX + 10, cY + 10),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
     return coordinates
 
