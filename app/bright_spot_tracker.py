@@ -9,7 +9,7 @@ UPPER_RED1 = np.array([147, 255, 255])
 LOWER_RED2 = np.array([150, 100, 100])
 UPPER_RED2 = np.array([180, 255, 255])
 
-def process_frame(frame, osd_frame):
+def process_frame(frame, osd_frame = None):
     # Convert the frame to HSV color space
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     
@@ -45,9 +45,10 @@ def process_frame(frame, osd_frame):
             coordinates = (cX_centered, cY_centered)
             
             # Print the coordinates on the frame
-            cv2.circle(osd_frame, (cX, cY), 1, (0, 0, 255), -1)
-            cv2.putText(osd_frame, f"({cX_centered}, {cY_centered})", (cX + 10, cY - 10),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+            if (osd_frame is not None): 
+                cv2.circle(osd_frame, (cX, cY), 1, (0, 0, 255), -1)
+                cv2.putText(osd_frame, f"({cX_centered}, {cY_centered})", (cX + 10, cY - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
 
     # Print level colors
     lower_red1_bgr = cv2.cvtColor(np.uint8([[LOWER_RED1]]), cv2.COLOR_HSV2BGR)[0][0]

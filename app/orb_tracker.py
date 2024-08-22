@@ -3,9 +3,9 @@
 import cv2
 import numpy as np
 
-# TARGET_IMAGE = r'.\assets\flying_drone.png'
-# TARGET_IMAGE = r'.\assets\hexacopter.png'
-TARGET_IMAGE = r'.\assets\red_drone.png'
+# TARGET_IMAGE = './assets/flying_drone.png'
+# TARGET_IMAGE = './assets/hexacopter.png'
+TARGET_IMAGE = './assets/red_drone.png'
 
 # Initiate ORB
 orb = None
@@ -13,7 +13,7 @@ bf = None
 keypoints_1 = None
 descriptors_1 = None
 
-def init_orb():
+def init_orb(show_debug_images = False):
     global orb, bf, keypoints_1, descriptors_1
     orb = cv2.ORB_create()
     bf = cv2.BFMatcher()
@@ -22,21 +22,24 @@ def init_orb():
     image = cv2.imread(TARGET_IMAGE)
     gray_image = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
     rgb_image =cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
-    cv2.imshow('Input Image', rgb_image)
 
     # find the keypoints with ORB
     keypoints_1, descriptors_1 = orb.detectAndCompute(gray_image, None)
 
-    # draw only keypoints location,not size and orientation
-    img2 = cv2.drawKeypoints(rgb_image, keypoints_1, None, color=(0,255,0), flags=0)
+    if (show_debug_images): 
+        # Display the input image
+        if (show_debug_images): cv2.imshow('Input Image', rgb_image)
 
-    # Display the image with the keypoints
-    cv2.imshow('Image', img2)
+        # draw only keypoints location,not size and orientation
+        img2 = cv2.drawKeypoints(rgb_image, keypoints_1, None, color=(0,255,0), flags=0)
 
-def process_frame(frame, osd_frame):
+        # Display the image with the keypoints
+        cv2.imshow('Image', img2)
+
+def process_frame(frame, osd_frame = None):
     # Init ORB if needed
     if orb is None:
-        init_orb()
+        init_orb(osd_frame is not None)
 
     # Initialize coordinates
     coordinates = None
@@ -63,7 +66,8 @@ def process_frame(frame, osd_frame):
             coord_array.append(pt2)
             
             # draw circle to pt2 coordinates , because pt2 gives current frame coordinates
-            cv2.circle(osd_frame,(int(pt2[0]),int(pt2[1])),2,(255,0,0),2)
+            if (osd_frame is not None):
+                cv2.circle(osd_frame,(int(pt2[0]), int(pt2[1])),2,(255,0,0),2)
 
     # Get the center of the major cluster
     cX, cY = None, None
@@ -83,9 +87,10 @@ def process_frame(frame, osd_frame):
     coordinates = (cX_centered, cY_centered)
 
     # Print the coordinates on the frame
-    cv2.circle(osd_frame, (int(cX), int(cY)), 1, (0, 0, 255), -1)
-    cv2.putText(osd_frame, f"({cX_centered}, {cY_centered})", (cX + 10, cY + 10),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+    if (osd_frame is not None):
+        cv2.circle(osd_frame, (int(cX), int(cY)), 1, (0, 0, 255), -1)
+        cv2.putText(osd_frame, f"({cX_centered}, {cY_centered})", (cX + 10, cY + 10),
+            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
     return coordinates
 
 def get_major_cluster_center(points, radius=50, min_cluster_size=30):
